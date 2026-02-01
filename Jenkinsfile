@@ -3,10 +3,6 @@ pipeline {
         label 'docker-agent-1'
     }
 
-    environment {
-        APP_NAME = "telecom-service"
-        BUILD_VERSION = ""
-    }
 
     stages {
 
@@ -30,7 +26,7 @@ pipeline {
         stage('Package Artifact') {
             steps {
                 script {
-                    def artifact = "${APP_NAME}-${BUILD_VERSION}-build-${env.BUILD_NUMBER}.tar.gz"
+                    def artifact = "${APP_NAME}-build-${env.BUILD_NUMBER}.tar.gz"
                     sh "tar -czf ${artifact} build/"
                     env.ARTIFACT_NAME = artifact
                 }
