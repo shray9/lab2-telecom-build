@@ -23,7 +23,6 @@ pipeline {
                 sh '''
                     mkdir -p build
                     cp -r src build/
-                    cp VERSION build/
                 '''
             }
         }
