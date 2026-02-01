@@ -1,0 +1,66 @@
+pipeline {
+    agent {
+        label 'docker-agent-1'
+    }
+
+    environment {
+        APP_NAME = "telecom-service"
+        BUILD_VERSION = ""
+    }
+
+    stages {
+
+        stage('Checkout') {
+            steps {
+                echo "📥 Source code checked out from GitHub"
+            }
+        }
+
+        stage('Read Version') {
+            steps {
+                script {
+                    BUILD_VERSION = readFile('VERSION').trim()
+                    echo "📌 App Version: ${BUILD_VERSION}"
+                }
+            }
+        }
+
+        stage('Build') {
+            steps {
+                echo "🔧 Building telecom microservice"
+                sh '''
+                    mkdir -p build
+                    cp -r src build/
+                    cp VERSION build/
+                '''
+            }
+        }
+
+        stage('Package Artifact') {
+            steps {
+                script {
+                    def artifact = "${APP_NAME}-${BUILD_VERSION}-build-${env.BUILD_NUMBER}.tar.gz"
+                    sh "tar -czf ${artifact} build/"
+                    env.ARTIFACT_NAME = artifact
+                }
+            }
+        }
+
+        stage('Archive Artifact') {
+            steps {
+                archiveArtifacts artifacts: '*.tar.gz', fingerprint: true
+                echo "📦 Artifact archived"
+            }
+        }
+    }
+
+    post {
+        success {
+            echo "✅ Telecom build successful"
+        }
+        failure {
+            echo "❌ Telecom build failed"
+        }
+    }
+}
+
