@@ -16,15 +16,7 @@ pipeline {
             }
         }
 
-        stage('Read Version') {
-            steps {
-                script {
-                    BUILD_VERSION = readFile('VERSION').trim()
-                    echo "📌 App Version: ${BUILD_VERSION}"
-                }
-            }
-        }
-
+      
         stage('Build') {
             steps {
                 echo "🔧 Building telecom microservice"
